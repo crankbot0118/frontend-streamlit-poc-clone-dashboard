@@ -172,7 +172,7 @@ def job_wizard_2():
             try:
 
                 response = requests.post(
-                    "http://54.90.68.252:8000/submit_job",
+                    "http://3.88.182.12:8000/submit_job",
                     json=payload
                 )
 
