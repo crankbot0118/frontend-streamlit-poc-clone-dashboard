@@ -8,55 +8,6 @@ st.set_page_config(
 )
 
 # -------------------------------
-# HELPERS
-# -------------------------------
-
-def get_status_color(status):
-
-    status = status.upper()
-
-    if status == "RUNNING":
-        return "#f39c12"
-
-    elif status == "FAILED":
-        return "#e74c3c"
-
-    elif status == "COMPLETED":
-        return "#27ae60"
-
-    elif status == "PENDING":
-        return "#3498db"
-
-    return "#95a5a6"
-
-
-def get_jobs():
-
-    try:
-
-        response = requests.get(
-            "http://54.90.68.252:8000/rps_job_list"
-        )
-
-        if response.status_code == 200:
-
-            data = response.json()
-
-            if isinstance(data, str):
-                data = json.loads(data)
-
-            return data
-
-        return []
-
-    except Exception as e:
-
-        st.error(f"Backend Connection Failed: {e}")
-
-        return []
-
-
-# -------------------------------
 # GLOBAL CSS
 # -------------------------------
 
@@ -116,7 +67,7 @@ def home():
 
     st.title("Cloning POC Dashboard")
 
-    schedule_col, refresh_col = st.columns([1, 1])
+    schedule_col,=st.columns([1, 1])
 
     with schedule_col:
 
@@ -125,72 +76,9 @@ def home():
             st.session_state.page = "job_wizard_1"
             st.rerun()
 
-    with refresh_col:
-
-        if st.button("Refresh Jobs"):
-            st.rerun()
-
     st.divider()
 
     st.subheader("Running / Pending / Scheduled Jobs")
-
-    jobs = get_jobs()
-
-    if not jobs:
-
-        st.info("No jobs found")
-
-        return
-
-    for job in jobs:
-
-        status_color = get_status_color(job["status"])
-
-        st.markdown(
-            f"""
-            <div class="job-card"
-                style="
-                    border:1px solid #1f2937;
-                    border-radius:14px;
-                    padding:20px;
-                    margin-bottom:15px;
-                    background-color:#111827;
-                "
-            >
-
-                <div style="
-                    font-size:30px;
-                    font-weight:bold;
-                    color:white;
-                ">
-                    {job["job_name"]}
-                </div>
-
-                <div style="
-                    font-size:16px;
-                    color:#9ca3af;
-                    margin-top:6px;
-                ">
-                    {job["target_instance"]}
-                </div>
-
-                <div style="
-                    margin-top:15px;
-                    display:inline-block;
-                    padding:6px 14px;
-                    border-radius:20px;
-                    background-color:{status_color};
-                    color:white;
-                    font-weight:bold;
-                    font-size:14px;
-                ">
-                    {job["status"]}
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
 # -------------------------------
 # JOB WIZARD STEP 1
