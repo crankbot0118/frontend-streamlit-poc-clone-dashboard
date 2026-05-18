@@ -39,7 +39,13 @@ def get_jobs():
         )
 
         if response.status_code == 200:
-            return response.json()
+
+            data = response.json()
+
+            if isinstance(data, str):
+                data = json.loads(data)
+
+            return data
 
         return []
 
