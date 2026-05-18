@@ -14,32 +14,12 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* Hide top-right toolbar */
-[data-testid="stToolbar"] {
-    display: none;
-}
+[data-testid="stToolbar"] { display: none; }
+.stAppDeployButton { display: none; }
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+header { visibility: hidden; }
 
-/* Hide Deploy button */
-.stAppDeployButton {
-    display: none;
-}
-
-/* Hide hamburger menu */
-#MainMenu {
-    visibility: hidden;
-}
-
-/* Hide footer */
-footer {
-    visibility: hidden;
-}
-
-/* Hide header */
-header {
-    visibility: hidden;
-}
-
-/* Card Hover */
 .job-card:hover {
     border: 1px solid #3b82f6 !important;
     transform: scale(1.01);
@@ -53,11 +33,53 @@ header {
 # SESSION STATE INIT
 # -------------------------------
 
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "username" not in st.session_state:
+    st.session_state.username = ""
+
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
 if "job_payload" not in st.session_state:
     st.session_state.job_payload = {}
+
+# -------------------------------
+# USERS  (replace with DB later)
+# -------------------------------
+
+USERS = {
+    "admin":  "admin123",
+    "dba":    "dba123",
+    "viewer": "view123",
+}
+
+# -------------------------------
+# LOGIN PAGE
+# -------------------------------
+
+def login():
+
+    _, col, _ = st.columns([1, 1, 1])
+
+    with col:
+
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.title("🔐 EBS Clone POC")
+        st.markdown("---")
+
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+        if st.button("Sign in", type="primary", use_container_width=True):
+
+            if username in USERS and USERS[username] == password:
+                st.session_state.logged_in = True
+                st.session_state.username  = username
+                st.rerun()
+            else:
+                st.error("Invalid username or password.")
 
 # -------------------------------
 # HOME
@@ -67,12 +89,11 @@ def home():
 
     st.title("Cloning POC Dashboard")
 
-    schedule_col,=st.columns([1])
+    schedule_col, = st.columns([1])
 
     with schedule_col:
 
         if st.button("Schedule a Job"):
-
             st.session_state.page = "job_wizard_1"
             st.rerun()
 
@@ -110,14 +131,12 @@ def job_wizard_1():
     with back_button:
 
         if st.button("Back"):
-
             st.session_state.page = "home"
             st.rerun()
 
     with next_button:
 
         if st.button("Next"):
-
             st.session_state.page = "job_wizard_2"
             st.rerun()
 
@@ -138,7 +157,6 @@ def job_wizard_2():
     with back_button:
 
         if st.button("Back"):
-
             st.session_state.page = "job_wizard_1"
             st.rerun()
 
@@ -159,23 +177,29 @@ def job_wizard_2():
                 )
 
                 if response.status_code == 200:
-
                     st.success("Job Submitted Successfully!")
-                    # st.session_state.page = "home"
-
-                    # st.rerun()
-
                 else:
-
                     st.error("Job Submission Failed")
 
             except Exception as e:
-
                 st.error(f"Connection Error: {e}")
 
 # -------------------------------
 # PAGE ROUTING
 # -------------------------------
+
+if not st.session_state.logged_in:
+    login()
+    st.stop()
+
+# Logout button (top right via sidebar or inline)
+with st.sidebar:
+    st.markdown(f"Signed in as **{st.session_state.username}**")
+    if st.button("Sign out"):
+        st.session_state.logged_in = False
+        st.session_state.username  = ""
+        st.session_state.page      = "home"
+        st.rerun()
 
 if st.session_state.page == "home":
     home()
