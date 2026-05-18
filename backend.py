@@ -1,4 +1,4 @@
-from fastapi import fastAPI
+from fastapi import FastAPI
 
 from db import (
     init_db_pool,
