@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import time
+import requests
 
 st.set_page_config(
     layout="wide",
