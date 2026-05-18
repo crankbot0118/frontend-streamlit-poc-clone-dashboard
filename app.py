@@ -67,7 +67,7 @@ def home():
 
     st.title("Cloning POC Dashboard")
 
-    schedule_col,=st.columns([1, 1])
+    schedule_col,=st.columns([1])
 
     with schedule_col:
 
