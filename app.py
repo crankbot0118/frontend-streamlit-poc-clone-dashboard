@@ -123,7 +123,7 @@ def job_wizard_2():
             }
 
             response = requests.post(
-                "http://54.90.68.252:8000/submit-job",
+                "http://54.90.68.252:8000/submit_job",
                 json=payload
             )
 
