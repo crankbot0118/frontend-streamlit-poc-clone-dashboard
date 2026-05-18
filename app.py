@@ -161,10 +161,9 @@ def job_wizard_2():
                 if response.status_code == 200:
 
                     st.success("Job Submitted Successfully!")
+                    # st.session_state.page = "home"
 
-                    st.session_state.page = "home"
-
-                    st.rerun()
+                    # st.rerun()
 
                 else:
 
