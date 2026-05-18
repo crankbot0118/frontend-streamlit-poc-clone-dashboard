@@ -116,8 +116,21 @@ def job_wizard_2():
     
     with next_button:
         if st.button("Submit"):
+            payload = {
+                "job_name": "CLONE",
+                "target_instance": st.session_state.target_instance
+            }
 
-            st.success("Job Submitted!")
+            response = requests.post(
+                "http://54.90.68.252:8000/submit-job",
+                json=payload
+            )
+
+            if response.status_code == 200:
+                st.success("Job Submitted Successfully!")
+
+            else:
+                st.error("Job Submission Failed")           
 
 #SESSION STATE FLOW
 if st.session_state.page == "home":
