@@ -20,6 +20,30 @@ async def root():
         "status": "backend running"
     }
 
+@app.get("/rps_job_list")
+async def rps_list_jobs():
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+    select_query = """
+        SELECT json_agg(job_list)
+        FROM job_list;
+    """
+
+    cursor.execute(
+        select_query
+    )
+
+    cursor.close()
+
+    release_connection(connection)
+
+    return {
+        "message": "Job Submitted Successfully"
+    }
+
+
 @app.post("/submit_job")
 async def submit_job(payload: dict):
     connection = get_connection()
